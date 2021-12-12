@@ -5,6 +5,7 @@ import (
 	"math/rand"
 	"strings"
 	"time"
+	"unsafe"
 )
 
 // Contains 判断字符串s中是否包含字串sub
@@ -45,4 +46,26 @@ func NumCaptcha(digit int) string {
 		fmt.Fprintf(&sb, "%d", numeric[rand.Intn(r)])
 	}
 	return sb.String()
+}
+
+// FromBytes 将字节转字符串
+func FromBytes(bytes []byte) string {
+	return *(*string)(unsafe.Pointer(&bytes))
+}
+
+// ToBytes 将字符串转字节
+func ToBytes(str string) []byte {
+	x := (*[2]uintptr)(unsafe.Pointer(&str))
+	h := [3]uintptr{x[0], x[1], x[1]}
+	return *(*[]byte)(unsafe.Pointer(&h))
+}
+
+// ContainsIn 判断str是否在str数组中
+func ContainsIn(str string, strs []string) bool {
+	for _, v := range strs {
+		if v == str {
+			return true
+		}
+	}
+	return false
 }
